@@ -1,0 +1,11 @@
+{
+  "name": "aicte-apaar-setu-monorepo",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AICTE Unified APAAR Student Registry, Seat-Matrix Compliance & Verifiable Credential Portal (SIH Problem Statement 26063)",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "dev:backend": "backend/venv/bin/uvicorn backend.app.main:app --reload --port 8000"
+  }
+}

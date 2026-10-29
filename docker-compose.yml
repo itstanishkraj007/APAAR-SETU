@@ -1,0 +1,24 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aicte_apaar_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - API_ENV_MODE=SANDBOX_MOCK
+      - PORT=8000
+      - HOST=0.0.0.0
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aicte_apaar_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped

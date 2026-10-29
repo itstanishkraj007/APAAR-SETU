@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --aicte-navy: #0B2240;
+    --aicte-navy-dark: #071629;
+    --aicte-blue: #1E3A8A;
+    --aicte-gold: #D97706;
+    --gov-green: #138808;
+    --gov-saffron: #FF9933;
+  }
+}
+
+/* High-density official government UI tweaks */
+body {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+.font-mono-numeric {
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbars for high density tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
