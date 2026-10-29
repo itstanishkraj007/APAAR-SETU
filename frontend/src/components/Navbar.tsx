@@ -34,6 +34,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Features & Sandbox', path: '/features' },
+    { name: '🎬 3-Min Video Explainer', path: '/explainer' },
     { name: 'Role SSO Login', path: '/login' },
     { name: 'Audit Ledger', path: '/audit' }
   ];

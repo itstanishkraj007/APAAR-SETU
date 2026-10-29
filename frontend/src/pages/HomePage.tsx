@@ -114,6 +114,14 @@ export const HomePage: React.FC = () => {
               <SearchCheck className="w-4 h-4 text-emerald-400" />
               <span>Public Credential Verifier</span>
             </button>
+
+            <button
+              onClick={() => navigate('/explainer')}
+              className="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold px-4 py-3 rounded-lg transition flex items-center space-x-2 shadow-md border border-amber-400/40"
+            >
+              <Sparkles className="w-4 h-4 text-amber-200" />
+              <span>🎬 Watch 3-Min SIH Motion Graphics Explainer</span>
+            </button>
           </div>
         </div>
 

@@ -13,6 +13,7 @@ import { HomePage } from './pages/HomePage';
 import { FeaturesPage } from './pages/FeaturesPage';
 import { LoginPage } from './pages/LoginPage';
 import { AuditPage } from './pages/AuditPage';
+import { VideoExplainerPage } from './pages/VideoExplainerPage';
 
 // Dashboards
 import { InstitutionDashboard } from './components/InstitutionDashboard';
@@ -44,6 +45,8 @@ const AppLayout: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/explainer" element={<VideoExplainerPage />} />
+          <Route path="/video" element={<Navigate to="/explainer" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/audit" element={<AuditPage />} />
           

@@ -19,3 +19,8 @@ Thumbs.db
 # Environment Secrets
 .env
 !.env.example
+
+# Video Render Artifacts
+video/out/
+*.mp4
+*.png
