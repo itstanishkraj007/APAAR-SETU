@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppStore } from './store/appStore';
 import { GovernmentStrip } from './components/GovernmentStrip';
 import { Navbar } from './components/Navbar';
+import { TelemetryFooter } from './components/TelemetryFooter';
 import { AdapterInspectorModal } from './components/AdapterInspectorModal';
 import { AuditDrawer } from './components/AuditDrawer';
 import { StudentForensicsDrawer } from './components/StudentForensicsDrawer';
@@ -32,13 +33,13 @@ const AppLayout: React.FC = () => {
   return (
     <div className={`min-h-screen flex flex-col bg-slate-100 ${getFontSizeClass()}`}>
       
-      {/* 1. Official Government Top Strip */}
+      {/* Zone 1: Official GIGW 3.0 Top Government Accessibility Strip */}
       <GovernmentStrip />
 
-      {/* 2. Unified, Consistent AICTE Primary Navigation & Evaluator Bar */}
+      {/* Zone 2: Official AICTE Masthead & Persistent Role Switcher Bar */}
       <Navbar />
 
-      {/* 3. Main Routed View Area */}
+      {/* Zone 3: Main High-Density Workspace / Public Pages */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -46,7 +47,7 @@ const AppLayout: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/audit" element={<AuditPage />} />
           
-          {/* Role-Based Workspaces */}
+          {/* 5 Official Operational Role Workspaces */}
           <Route path="/institution" element={<InstitutionDashboard />} />
           <Route path="/compliance" element={<AICTEComplianceDashboard />} />
           <Route path="/aicte-command" element={<Navigate to="/compliance" replace />} />
@@ -54,33 +55,15 @@ const AppLayout: React.FC = () => {
           <Route path="/verify" element={<EmployerVerifierDashboard />} />
           <Route path="/student-wallet" element={<StudentWalletDashboard />} />
 
-          {/* Catch-all redirect to Home */}
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
-      {/* 4. GIGW 3.0 Compliant Government Footer */}
-      <footer className="bg-[#0B2240] text-slate-300 text-xs py-6 border-t-2 border-amber-500 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div>
-            <div className="font-bold text-white flex items-center justify-center sm:justify-start space-x-2">
-              <span>All India Council for Technical Education (AICTE)</span>
-              <span className="text-amber-400 font-mono">|</span>
-              <span className="text-slate-400">Smart India Hackathon 2026</span>
-            </div>
-            <p className="text-[11px] text-slate-400 mt-1">
-              Problem Statement ID: 26063 &middot; Integrated APAAR-based Student Data Management and Verification System
-            </p>
-          </div>
+      {/* Zone 4: Telemetry Footer (Audit Hash + DPI Mode) */}
+      <TelemetryFooter />
 
-          <div className="text-[11px] text-slate-400 font-mono space-y-0.5">
-            <div>Security: SHA-256 Merkle Ledger &middot; Ed25519 CCA PKI &middot; DPDP Act 2023</div>
-            <div className="text-slate-500">Government of India &middot; Guidelines for Indian Government Websites (GIGW 3.0)</div>
-          </div>
-        </div>
-      </footer>
-
-      {/* Global Modals & Drawers */}
+      {/* Global Modals & Forensic Drawers */}
       <AdapterInspectorModal />
       <AuditDrawer />
       <StudentForensicsDrawer />
