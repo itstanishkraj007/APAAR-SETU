@@ -4,16 +4,20 @@
   :root {
     --aicte-navy: #0B2240;
     --aicte-navy-dark: #071629;
-    --aicte-blue: #1E3A8A;
-    --aicte-gold: #D97706;
-    --gov-green: #138808;
+    --aicte-blue: #1868FF;
+    --aicte-gold: #F5B82E;
+    --gov-green: #10B981;
     --gov-saffron: #FF9933;
   }
 }
 
-/* High-density official government UI tweaks */
 body {
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  background-color: #F4F3EF;
+  color: #0F172A;
+  margin: 0;
+  padding: 0;
 }
 
 .font-mono-numeric {
@@ -21,18 +25,39 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Hatched diagonal background pattern for empty/pending days */
+.bg-hatched-slate {
+  background: repeating-linear-gradient(
+    45deg,
+    #E2E8F0,
+    #E2E8F0 2px,
+    #F1F5F9 2px,
+    #F1F5F9 6px
+  );
+}
+
+.bg-hatched-amber {
+  background: repeating-linear-gradient(
+    45deg,
+    #FEF08A,
+    #FEF08A 2px,
+    #FEF9C3 2px,
+    #FEF9C3 6px
+  );
+}
+
 /* Custom scrollbars for high density tables */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #CBD5E1;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #94A3B8;
 }

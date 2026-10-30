@@ -387,6 +387,12 @@ interface AppContextType {
   setIsAdapterModalOpen: (b: boolean) => void;
   isAuditDrawerOpen: boolean;
   setIsAuditDrawerOpen: (b: boolean) => void;
+  isUploadModalOpen: boolean;
+  setIsUploadModalOpen: (b: boolean) => void;
+  isCommandPaletteOpen: boolean;
+  setIsCommandPaletteOpen: (b: boolean) => void;
+  activeDuplicateStudent: StudentRecord | null;
+  setActiveDuplicateStudent: (s: StudentRecord | null) => void;
   selectedForensicStudent: StudentRecord | null;
   setSelectedForensicStudent: (s: StudentRecord | null) => void;
   toastMessage: string | null;
@@ -409,6 +415,7 @@ interface AppContextType {
   toggleConsent: (apaarId: string, granted: boolean) => Promise<any>;
   verifyLedger: () => Promise<any>;
   loadDemoScenario: (scenarioIndex: number) => Promise<void>;
+  exportDataPackage: (format: 'AISHE' | 'NBA' | 'NIRF' | 'ALL') => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -421,6 +428,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [apiEnvMode, setApiEnvMode] = useState<'SANDBOX_MOCK' | 'PRODUCTION_GOV'>('SANDBOX_MOCK');
   const [isAdapterModalOpen, setIsAdapterModalOpen] = useState<boolean>(false);
   const [isAuditDrawerOpen, setIsAuditDrawerOpen] = useState<boolean>(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState<boolean>(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState<boolean>(false);
+  const [activeDuplicateStudent, setActiveDuplicateStudent] = useState<StudentRecord | null>(null);
   const [selectedForensicStudent, setSelectedForensicStudent] = useState<StudentRecord | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -658,6 +668,64 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const exportDataPackage = (format: 'AISHE' | 'NBA' | 'NIRF' | 'ALL') => {
+    let content = '';
+    let filename = '';
+    let mimeType = 'text/csv';
+
+    if (format === 'AISHE') {
+      filename = 'AISHE_DCF_II_Return_2026.csv';
+      const header = 'Academic_Year,AICTE_Institute_ID,Institute_Name,Course,Approved_Intake,Total_Admitted,Regular_Merit,NRI_Quota,TFW_Supernumerary,FN_OCI_Supernumerary,PMSSS_Supernumerary,12_Digit_APAAR_Linked_Pct\n';
+      const rows = institutions.map(i => {
+        const instStudents = students.filter(s => s.institution_id === i.id && s.status === 'VERIFIED_ACTIVE');
+        const regular = instStudents.filter(s => s.quota_bucket === 'REGULAR_MERIT').length;
+        const nri = instStudents.filter(s => s.quota_bucket === 'NRI_QUOTA_5PCT').length;
+        const tfw = instStudents.filter(s => s.quota_bucket === 'SUPERNUMERARY_TFW_5PCT').length;
+        const fn = instStudents.filter(s => s.quota_bucket === 'SUPERNUMERARY_FN_OCI_15PCT').length;
+        const pmsss = instStudents.filter(s => s.quota_bucket === 'SUPERNUMERARY_PMSSS').length;
+        return `2026-27,"${i.id}","${i.name}","${i.course_name}",${i.approved_intake},${instStudents.length},${regular},${nri},${tfw},${fn},${pmsss},100%`;
+      }).join('\n');
+      content = header + rows;
+    } else if (format === 'NBA') {
+      filename = 'NBA_Criterion_4_Enrolment_Register.csv';
+      const header = 'Student_ID,APAAR_ID,Student_Name,DOB,Gender,Category,Course,Quota_Bucket,Seat_Slot_ID,Status,Sanctioned_Intake_Proof\n';
+      const rows = students.map(s => {
+        return `"${s.student_id}","${s.apaar_id}","${s.name}","${s.dob}","${s.gender}","${s.category}","${s.course_name}","${s.quota_bucket}","${s.seat_slot_id || 'QUARANTINED'}","${s.status}","${s.seat_slot_id ? 'VERIFIED_SANCTIONED_SEAT' : 'EXCESS_BLOCKED'}"`;
+      }).join('\n');
+      content = header + rows;
+    } else if (format === 'NIRF') {
+      filename = 'NIRF_Sanctioned_Intake_Audit_2026.csv';
+      const header = 'AICTE_ID,Institute,State,Region,Sanctioned_Intake,Verified_Enrolled,Intake_Utilization_Pct,Compliance_Rating\n';
+      const rows = institutions.map(i => {
+        const active = students.filter(s => s.institution_id === i.id && s.status === 'VERIFIED_ACTIVE').length;
+        const pct = Math.round((active / i.approved_intake) * 100);
+        return `"${i.id}","${i.name}","${i.state}","${i.region}",${i.approved_intake},${active},${pct}%,"${pct <= 100 ? 'COMPLIANT' : 'EXCESS_PENALTY'}"`;
+      }).join('\n');
+      content = header + rows;
+    } else {
+      filename = 'AICTE_National_Student_Registry_Full.json';
+      mimeType = 'application/json';
+      content = JSON.stringify({
+        academic_year: '2026-27',
+        system: 'AICTE APAAR-Setu Platform',
+        authority: 'Ministry of Education, Govt. of India',
+        institutions,
+        students,
+        generated_at: new Date().toISOString()
+      }, null, 2);
+    }
+
+    const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported: ${filename} downloaded successfully.`);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -676,6 +744,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setIsAdapterModalOpen,
         isAuditDrawerOpen,
         setIsAuditDrawerOpen,
+        isUploadModalOpen,
+        setIsUploadModalOpen,
+        isCommandPaletteOpen,
+        setIsCommandPaletteOpen,
+        activeDuplicateStudent,
+        setActiveDuplicateStudent,
         selectedForensicStudent,
         setSelectedForensicStudent,
         toastMessage,
@@ -693,7 +767,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         freezeInstitution,
         toggleConsent,
         verifyLedger,
-        loadDemoScenario
+        loadDemoScenario,
+        exportDataPackage
       }}
     >
       {children}

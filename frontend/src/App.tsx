@@ -1,12 +1,15 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppStore } from './store/appStore';
-import { GovernmentStrip } from './components/GovernmentStrip';
-import { Navbar } from './components/Navbar';
+import { FloatingSidebarRail } from './components/FloatingSidebarRail';
+import { BentoHeader } from './components/BentoHeader';
 import { TelemetryFooter } from './components/TelemetryFooter';
 import { AdapterInspectorModal } from './components/AdapterInspectorModal';
 import { AuditDrawer } from './components/AuditDrawer';
 import { StudentForensicsDrawer } from './components/StudentForensicsDrawer';
+import { UploadRosterModal } from './components/modals/UploadRosterModal';
+import { DuplicateResolutionModal } from './components/modals/DuplicateResolutionModal';
+import { CommandPaletteModal } from './components/modals/CommandPaletteModal';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -32,49 +35,67 @@ const AppLayout: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col bg-slate-100 ${getFontSizeClass()}`}>
+    <div className={`min-h-screen bg-[#F4F3EF] text-slate-900 font-sans flex flex-col ${getFontSizeClass()}`}>
       
-      {/* Zone 1: Official GIGW 3.0 Top Government Accessibility Strip */}
-      <GovernmentStrip />
+      {/* Official Indian Sovereign Tricolor 3px Accent Line */}
+      <div className="h-[3px] w-full flex shrink-0">
+        <div className="w-1/3 bg-[#FF9933]"></div>
+        <div className="w-1/3 bg-[#FFFFFF]"></div>
+        <div className="w-1/3 bg-[#138808]"></div>
+      </div>
 
-      {/* Zone 2: Official AICTE Masthead & Persistent Role Switcher Bar */}
-      <Navbar />
+      {/* Main Responsive Canvas (Floating Rail + Bento Workspace) */}
+      <div className="flex-1 p-3 sm:p-5 flex gap-4 min-w-0">
+        
+        {/* Left Floating Sidebar Rail (From Images 3, 4 & 7) */}
+        <FloatingSidebarRail />
 
-      {/* Zone 3: Main High-Density Workspace / Public Pages */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/explainer" element={<VideoExplainerPage />} />
-          <Route path="/video" element={<Navigate to="/explainer" replace />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/audit" element={<AuditPage />} />
+        {/* Right Main Column (Bento Header + Dynamic Route Views + Telemetry Footer) */}
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
           
-          {/* 5 Official Operational Role Workspaces */}
-          <Route path="/institution" element={<InstitutionDashboard />} />
-          <Route path="/compliance" element={<AICTEComplianceDashboard />} />
-          <Route path="/aicte-command" element={<Navigate to="/compliance" replace />} />
-          <Route path="/analytics" element={<PolicyAnalyticsDashboard />} />
-          <Route path="/verify" element={<EmployerVerifierDashboard />} />
-          <Route path="/student-wallet" element={<StudentWalletDashboard />} />
+          {/* Top Floating Action Header with 5-Role Switcher Pills (From Images 2, 3 & 4) */}
+          <BentoHeader />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+          {/* Dynamic Route Workspace */}
+          <main className="flex-1 min-w-0">
+            <Routes>
+              <Route path="/" element={<InstitutionDashboard />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/institution" element={<InstitutionDashboard />} />
+              <Route path="/compliance" element={<AICTEComplianceDashboard />} />
+              <Route path="/aicte-command" element={<Navigate to="/compliance" replace />} />
+              <Route path="/analytics" element={<PolicyAnalyticsDashboard />} />
+              <Route path="/verify" element={<EmployerVerifierDashboard />} />
+              <Route path="/student-wallet" element={<StudentWalletDashboard />} />
+              
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/explainer" element={<VideoExplainerPage />} />
+              <Route path="/video" element={<Navigate to="/explainer" replace />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/audit" element={<AuditPage />} />
 
-      {/* Zone 4: Telemetry Footer (Audit Hash + DPI Mode) */}
-      <TelemetryFooter />
+              {/* Fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
 
-      {/* Global Modals & Forensic Drawers */}
+          {/* Telemetry Footer */}
+          <TelemetryFooter />
+        </div>
+      </div>
+
+      {/* Global Interactive Modals & Drawers */}
+      <UploadRosterModal />
+      <DuplicateResolutionModal />
+      <CommandPaletteModal />
       <AdapterInspectorModal />
       <AuditDrawer />
       <StudentForensicsDrawer />
 
-      {/* Global Action Toast Notification */}
+      {/* Global Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 bg-[#0B2240] text-white border-2 border-amber-500 rounded-lg px-4 py-2.5 shadow-2xl text-xs font-semibold animate-in slide-in-from-bottom duration-200 flex items-center space-x-2">
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <div className="fixed bottom-6 right-6 z-50 bg-[#141519] text-white rounded-2xl px-4 py-3 shadow-2xl text-xs font-semibold animate-in slide-in-from-bottom duration-200 flex items-center space-x-2.5 border border-slate-700">
+          <span className="w-2 h-2 rounded-full bg-[#FACC15] animate-ping"></span>
           <span>{toastMessage}</span>
         </div>
       )}
