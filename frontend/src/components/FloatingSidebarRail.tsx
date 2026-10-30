@@ -3,8 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore, USER_PRESETS, RoleType } from '../store/appStore';
 import { 
   LayoutGrid, ShieldAlert, BarChart3, SearchCheck, UserCheck, 
-  Cpu, Link2, PlayCircle, Settings, LogOut, ChevronRight, Check,
-  Sparkles, ShieldCheck, FileText, Bell, Globe2
+  Upload, Globe2, FileText, Award, Lock, AlertTriangle, Radar, 
+  Building2, Sparkles, Download, TrendingUp, QrCode, History, 
+  CreditCard, ShieldCheck, BookOpen, ChevronRight, Check, LogOut,
+  Terminal, Globe
 } from 'lucide-react';
 
 export const FloatingSidebarRail: React.FC = () => {
@@ -16,65 +18,246 @@ export const FloatingSidebarRail: React.FC = () => {
     role, 
     setIsAdapterModalOpen, 
     setIsAuditDrawerOpen,
-    auditBlocks,
+    setIsUploadModalOpen,
     apiEnvMode,
-    institutions,
-    selectedInstitutionId,
-    setSelectedInstitutionId
+    showToast,
+    exportDataPackage
   } = useAppStore();
 
   const [isRolePopoverOpen, setIsRolePopoverOpen] = useState(false);
+  const [activeItemId, setActiveItemId] = useState<string>('default');
 
-  const navItems = [
-    {
-      id: 'institution',
-      label: 'Institution Roster & Quotas',
-      path: '/institution',
-      icon: LayoutGrid,
-      roleMatch: 'ROLE_INSTITUTION' as RoleType,
-    },
-    {
-      id: 'compliance',
-      label: 'AICTE Compliance & Duplicates',
-      path: '/compliance',
-      icon: ShieldAlert,
-      roleMatch: 'ROLE_AICTE_COMPLIANCE' as RoleType,
-    },
-    {
-      id: 'analytics',
-      label: 'National Policy & AISHE',
-      path: '/analytics',
-      icon: BarChart3,
-      roleMatch: 'ROLE_ANALYTICS_POLICY' as RoleType,
-    },
-    {
-      id: 'verify',
-      label: 'Public Credential Verifier',
-      path: '/verify',
-      icon: SearchCheck,
-      roleMatch: 'ROLE_EMPLOYER_VERIFIER' as RoleType,
-    },
-    {
-      id: 'wallet',
-      label: 'Student DPDP Wallet',
-      path: '/student-wallet',
-      icon: UserCheck,
-      roleMatch: 'ROLE_STUDENT_WALLET' as RoleType,
-    },
-    {
-      id: 'features',
-      label: 'Features & Rules Sandbox',
-      path: '/features',
-      icon: FileText,
-    },
-    {
-      id: 'explainer',
-      label: '🎬 3-Min Video Explainer',
-      path: '/explainer',
-      icon: PlayCircle,
-      isSpecial: true,
-    },
-  ];
+  // Strict role-specific sidebar items per Part 3 Isolation Contract
+  const getRoleNavItems = () => {
+    switch (role) {
+      case 'ROLE_INSTITUTION':
+        return [
+          {
+            id: 'seat-matrix',
+            label: 'Seat Matrix Overview',
+            icon: LayoutGrid,
+            action: () => {
+              setActiveItemId('seat-matrix');
+              const el = document.getElementById('seat-matrix-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else showToast("Navigated to 5-Bucket Seat Matrix Overview.");
+            }
+          },
+          {
+            id: 'student-ingestion',
+            label: 'Student Ingestion (CSV/ERP)',
+            icon: Upload,
+            action: () => {
+              setActiveItemId('student-ingestion');
+              setIsUploadModalOpen(true);
+            }
+          },
+          {
+            id: 'nri-fn-bridge',
+            label: 'NRI / OCI / FN Bridge',
+            icon: Globe2,
+            action: () => {
+              setActiveItemId('nri-fn-bridge');
+              const el = document.getElementById('student-directory-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("Filtered view for Foreign National (FN) & OCI Supernumerary Cohort.");
+            }
+          },
+          {
+            id: 'student-directory',
+            label: 'Student Directory',
+            icon: FileText,
+            action: () => {
+              setActiveItemId('student-directory');
+              const el = document.getElementById('student-directory-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else showToast("Navigated to Master Student Directory.");
+            }
+          },
+          {
+            id: 'certificate-studio',
+            label: 'Dual-ID Certificate Studio',
+            icon: Award,
+            action: () => {
+              setActiveItemId('certificate-studio');
+              showToast("Dual-ID W3C Verifiable Credential Studio Ready.");
+            }
+          }
+        ];
+
+      case 'ROLE_AICTE_COMPLIANCE':
+        return [
+          {
+            id: 'national-command',
+            label: 'National Command',
+            icon: ShieldAlert,
+            action: () => {
+              setActiveItemId('national-command');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast("AICTE National Vigilance Command Center Active.");
+            }
+          },
+          {
+            id: 'duplicate-locks',
+            label: 'Duplicate APAAR Locks',
+            icon: Lock,
+            action: () => {
+              setActiveItemId('duplicate-locks');
+              const el = document.getElementById('duplicate-queue-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("Cross-Institution Duplicate Lock Queue Active.");
+            }
+          },
+          {
+            id: 'excess-quarantine',
+            label: 'Excess Intake Quarantine',
+            icon: AlertTriangle,
+            action: () => {
+              setActiveItemId('excess-quarantine');
+              const el = document.getElementById('excess-intake-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("Excess Admission Quarantine Table Focused.");
+            }
+          },
+          {
+            id: 'ai-radar',
+            label: 'AI Anomaly Radar',
+            icon: Radar,
+            action: () => {
+              setActiveItemId('ai-radar');
+              const el = document.getElementById('anomaly-radar-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("Isolation Forest + SHAP Anomaly Radar Activated.");
+            }
+          },
+          {
+            id: 'institution-dir',
+            label: 'Institution Directory',
+            icon: Building2,
+            action: () => {
+              setActiveItemId('institution-dir');
+              showToast("Inspecting 10,420+ Approved Institutions.");
+            }
+          }
+        ];
+
+      case 'ROLE_ANALYTICS_POLICY':
+        return [
+          {
+            id: 'national-stats',
+            label: 'National Enrolment Stats',
+            icon: BarChart3,
+            action: () => {
+              setActiveItemId('national-stats');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast("Viewing Real-Time National Enrolment Rollup.");
+            }
+          },
+          {
+            id: 'policy-copilot',
+            label: 'AI Policy Copilot',
+            icon: Sparkles,
+            action: () => {
+              setActiveItemId('policy-copilot');
+              const el = document.getElementById('policy-copilot-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("AI Text-to-SQL Policy Copilot Ready.");
+            }
+          },
+          {
+            id: 'aishe-exports',
+            label: 'AISHE / NBA Exports',
+            icon: Download,
+            action: () => {
+              setActiveItemId('aishe-exports');
+              exportDataPackage('AISHE');
+            }
+          },
+          {
+            id: 'nep-mobility',
+            label: 'NEP Mobility Tracker',
+            icon: TrendingUp,
+            action: () => {
+              setActiveItemId('nep-mobility');
+              showToast("Academic Bank of Credits (ABC) Credit Transfer Matrix.");
+            }
+          }
+        ];
+
+      case 'ROLE_EMPLOYER_VERIFIER':
+        return [
+          {
+            id: 'verify-credential',
+            label: 'Verify Credential',
+            icon: SearchCheck,
+            action: () => {
+              setActiveItemId('verify-credential');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast("Search by APAAR ID or Roll Number.");
+            }
+          },
+          {
+            id: 'qr-scanner',
+            label: 'QR Scanner',
+            icon: QrCode,
+            action: () => {
+              setActiveItemId('qr-scanner');
+              showToast("Simulating W3C Verifiable QR Code Verification.");
+            }
+          },
+          {
+            id: 'history',
+            label: 'Verification History',
+            icon: History,
+            action: () => {
+              setActiveItemId('history');
+              showToast("Showing audit trail of BGV verification queries.");
+            }
+          }
+        ];
+
+      case 'ROLE_STUDENT_WALLET':
+        return [
+          {
+            id: 'my-credential',
+            label: 'My APAAR Credential',
+            icon: CreditCard,
+            action: () => {
+              setActiveItemId('my-credential');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              showToast("Official Dual-ID Digital Credential Active.");
+            }
+          },
+          {
+            id: 'consent-requests',
+            label: 'DPDP Consent Requests',
+            icon: ShieldCheck,
+            action: () => {
+              setActiveItemId('consent-requests');
+              const el = document.getElementById('dpdp-consent-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("DPDP Act 2023 Sovereign Consent Dashboard.");
+            }
+          },
+          {
+            id: 'abc-ledger',
+            label: 'ABC Credit Ledger',
+            icon: BookOpen,
+            action: () => {
+              setActiveItemId('abc-ledger');
+              const el = document.getElementById('abc-credits-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+              showToast("Academic Bank of Credits (ABC) Sovereign Ledger.");
+            }
+          }
+        ];
+
+      default:
+        return [];
+    }
+  };
+
+  const navItems = getRoleNavItems();
 
   const roles = [
     { id: 'ROLE_INSTITUTION' as RoleType, label: '🏛️ Institution Registrar', path: '/institution' },
@@ -85,16 +268,17 @@ export const FloatingSidebarRail: React.FC = () => {
   ];
 
   return (
-    <aside className="w-16 lg:w-60 bg-white rounded-3xl p-3 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.04)] border border-slate-200/60 flex flex-col justify-between shrink-0 select-none">
+    <aside className="w-16 lg:w-60 bg-white rounded-3xl p-3 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.05)] border border-slate-200/80 flex flex-col justify-between shrink-0 select-none">
+      
       {/* Top Branding (AICTE Indian Emblem + Saffron Badge) */}
       <div className="space-y-4">
         <div 
           onClick={() => navigate('/')}
           className="flex items-center space-x-3 px-2 py-1.5 cursor-pointer group"
+          title="Return to Home"
         >
-          {/* Logo Emblem (Replicating Image 3 top yellow icon) */}
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#F5B82E] to-[#D97706] text-[#071629] flex items-center justify-center font-extrabold shadow-sm group-hover:scale-105 transition flex-shrink-0">
-            <ShieldCheck size={24} />
+            <ShieldCheck size={22} />
           </div>
 
           <div className="hidden lg:block overflow-hidden">
@@ -107,29 +291,36 @@ export const FloatingSidebarRail: React.FC = () => {
           </div>
         </div>
 
-        {/* Navigation Items (Replicating Image 3, 4 & 7 active pill styling) */}
+        {/* Role Context Pill Tag (Shows active isolated role) */}
+        <div className="hidden lg:block px-2.5 py-1.5 bg-slate-50 border border-slate-200/60 rounded-xl">
+          <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+            Active Role Workspace
+          </div>
+          <div className="text-xs font-bold text-slate-800 truncate mt-1 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span className="truncate">{currentUser.designation}</span>
+          </div>
+        </div>
+
+        {/* Strict Role-Isolated Navigation Items */}
         <nav className="space-y-1">
-          {navItems.map((item) => {
+          {navItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path;
+            const isFirst = index === 0 && activeItemId === 'default';
+            const isActive = activeItemId === item.id || isFirst;
 
             return (
               <button
                 key={item.id}
-                onClick={() => {
-                  if (item.roleMatch) loginAs(item.roleMatch);
-                  navigate(item.path);
-                }}
+                onClick={item.action}
                 className={`w-full flex items-center space-x-3 px-2.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer relative group ${
                   isActive
                     ? 'bg-[#141519] text-white shadow-xs'
-                    : item.isSpecial
-                    ? 'text-amber-800 bg-amber-50/70 hover:bg-amber-100/80'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 }`}
                 title={item.label}
               >
-                {/* Active Indicator Bar on Left (From Image 3) */}
+                {/* Active Indicator Bar on Left */}
                 {isActive && (
                   <div className="absolute left-0 top-2 bottom-2 w-1 bg-[#FACC15] rounded-r-full" />
                 )}
@@ -141,10 +332,6 @@ export const FloatingSidebarRail: React.FC = () => {
                 <span className="hidden lg:inline truncate font-semibold">
                   {item.label}
                 </span>
-
-                {item.isSpecial && (
-                  <span className="hidden lg:inline ml-auto w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                )}
               </button>
             );
           })}
@@ -158,91 +345,83 @@ export const FloatingSidebarRail: React.FC = () => {
 
           <button
             onClick={() => setIsAdapterModalOpen(true)}
-            className="w-full flex items-center justify-between px-2.5 py-2 rounded-2xl bg-slate-50 hover:bg-slate-100/80 text-[11px] font-bold text-slate-700 transition cursor-pointer"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition cursor-pointer"
           >
-            <div className="flex items-center space-x-2">
-              <Cpu size={14} className="text-blue-600" />
+            <span className="flex items-center space-x-2">
+              <Globe size={14} className="text-slate-500" />
               <span>10 DPI Gateways</span>
-            </div>
-            <span className="text-[9px] bg-emerald-100 text-emerald-800 font-mono px-1.5 py-0.2 rounded font-bold">
-              10/10 OK
+            </span>
+            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded border border-emerald-200">
+              {apiEnvMode === 'SANDBOX_MOCK' ? 'MOCK' : 'LIVE'}
             </span>
           </button>
 
           <button
             onClick={() => setIsAuditDrawerOpen(true)}
-            className="w-full flex items-center justify-between px-2.5 py-2 rounded-2xl bg-slate-50 hover:bg-slate-100/80 text-[11px] font-bold text-slate-700 transition cursor-pointer"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 transition cursor-pointer"
           >
-            <div className="flex items-center space-x-2">
-              <Link2 size={14} className="text-amber-600" />
-              <span>SHA-256 Ledger</span>
-            </div>
-            <span className="text-[9px] bg-slate-200 text-slate-800 font-mono px-1.5 py-0.2 rounded font-bold">
-              #{auditBlocks.length}
+            <span className="flex items-center space-x-2">
+              <Terminal size={14} className="text-slate-500" />
+              <span>Merkle Audit Log</span>
+            </span>
+            <span className="text-[10px] bg-slate-100 text-slate-600 font-mono px-1.5 py-0.5 rounded">
+              SHA-256
             </span>
           </button>
         </div>
       </div>
 
-      {/* Bottom Officer Profile Card + Role Switcher Popover (From Image 3 bottom profile) */}
-      <div className="relative pt-3 border-t border-slate-100">
-        <button
+      {/* Bottom Officer Profile & Fast Switcher */}
+      <div className="pt-3 border-t border-slate-200/60 relative">
+        <div 
           onClick={() => setIsRolePopoverOpen(!isRolePopoverOpen)}
-          className="w-full flex items-center space-x-2.5 p-1.5 rounded-2xl hover:bg-slate-100 transition cursor-pointer text-left group"
-          title="Switch Active Operational Role"
+          className="flex items-center space-x-2.5 p-1.5 rounded-2xl hover:bg-slate-100/80 transition cursor-pointer group"
+          title="Click to Switch Stakeholder Role"
         >
-          <div className="w-8 h-8 rounded-full bg-[#141519] text-[#FACC15] font-extrabold flex items-center justify-center font-mono text-xs flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-[#141519] text-white flex items-center justify-center text-xs font-bold shrink-0">
             {currentUser.avatarText}
           </div>
-
           <div className="hidden lg:block overflow-hidden flex-1">
-            <div className="text-[10px] text-slate-400 font-medium leading-none">Welcome back 👋</div>
-            <div className="text-xs font-bold text-slate-900 truncate mt-0.5 group-hover:text-amber-700 transition">
-              {currentUser.name.split(' ')[0]}
+            <div className="text-xs font-bold text-slate-900 truncate">
+              {currentUser.name}
+            </div>
+            <div className="text-[10px] text-slate-500 truncate">
+              {currentUser.designation}
             </div>
           </div>
+          <ChevronRight size={14} className="hidden lg:block text-slate-400 group-hover:translate-x-0.5 transition" />
+        </div>
 
-          <ChevronRight size={14} className="hidden lg:block text-slate-400 group-hover:text-slate-900 transition" />
-        </button>
-
-        {/* Role Switcher Popover */}
+        {/* Role Switcher Dropdown Popover */}
         {isRolePopoverOpen && (
-          <div className="absolute bottom-14 left-0 w-64 bg-white rounded-3xl shadow-xl border border-slate-200 p-2 z-50 text-xs animate-in fade-in duration-150">
-            <div className="p-2 border-b border-slate-100 mb-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Logged In As</span>
-              <div className="font-extrabold text-slate-900 mt-0.5">{currentUser.name}</div>
-              <div className="text-[11px] text-amber-700">{currentUser.designation}</div>
+          <div className="absolute bottom-14 left-0 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <div className="px-2 py-1 text-[10px] font-bold uppercase text-slate-400 border-b border-slate-100 mb-1">
+              Select Stakeholder Role
             </div>
-
-            <div className="space-y-0.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 block mb-1">
-                Instant Role Switch
-              </span>
-              {roles.map((r) => {
-                const isSelected = currentUser.role === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    onClick={() => {
-                      loginAs(r.id);
-                      setIsRolePopoverOpen(false);
-                      navigate(r.path);
-                    }}
-                    className={`w-full text-left px-2.5 py-2 rounded-xl text-xs flex items-center justify-between transition cursor-pointer ${
-                      isSelected
-                        ? 'bg-slate-900 text-white font-bold'
-                        : 'text-slate-700 hover:bg-slate-100'
-                    }`}
-                  >
-                    <span>{r.label}</span>
-                    {isSelected && <Check size={13} className="text-[#FACC15]" />}
-                  </button>
-                );
-              })}
-            </div>
+            {roles.map((r) => {
+              const isCurrent = currentUser.role === r.id;
+              return (
+                <button
+                  key={r.id}
+                  onClick={() => {
+                    loginAs(r.id);
+                    navigate(r.path);
+                    setIsRolePopoverOpen(false);
+                    setActiveItemId('default');
+                  }}
+                  className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold cursor-pointer transition ${
+                    isCurrent ? 'bg-amber-50 text-amber-900 font-bold' : 'text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  <span className="truncate">{r.label}</span>
+                  {isCurrent && <Check size={14} className="text-amber-600 shrink-0" />}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
+
     </aside>
   );
 };

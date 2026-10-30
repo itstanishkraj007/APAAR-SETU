@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useAppStore } from './store/appStore';
-import { FloatingSidebarRail } from './components/FloatingSidebarRail';
-import { BentoHeader } from './components/BentoHeader';
+import { TopSaaSNav } from './components/TopSaaSNav';
+import { PortalWorkspace } from './components/PortalWorkspace';
 import { TelemetryFooter } from './components/TelemetryFooter';
+
+// Modals & Drawers
 import { AdapterInspectorModal } from './components/AdapterInspectorModal';
 import { AuditDrawer } from './components/AuditDrawer';
 import { StudentForensicsDrawer } from './components/StudentForensicsDrawer';
@@ -14,16 +16,8 @@ import { CommandPaletteModal } from './components/modals/CommandPaletteModal';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { FeaturesPage } from './pages/FeaturesPage';
-import { LoginPage } from './pages/LoginPage';
-import { AuditPage } from './pages/AuditPage';
 import { VideoExplainerPage } from './pages/VideoExplainerPage';
-
-// Dashboards
-import { InstitutionDashboard } from './components/InstitutionDashboard';
-import { AICTEComplianceDashboard } from './components/AICTEComplianceDashboard';
-import { PolicyAnalyticsDashboard } from './components/PolicyAnalyticsDashboard';
-import { EmployerVerifierDashboard } from './components/EmployerVerifierDashboard';
-import { StudentWalletDashboard } from './components/StudentWalletDashboard';
+import { AuditPage } from './pages/AuditPage';
 
 const AppLayout: React.FC = () => {
   const { fontSizeLevel, toastMessage } = useAppStore();
@@ -37,51 +31,72 @@ const AppLayout: React.FC = () => {
   return (
     <div className={`min-h-screen bg-[#F4F3EF] text-slate-900 font-sans flex flex-col ${getFontSizeClass()}`}>
       
-      {/* Official Indian Sovereign Tricolor 3px Accent Line */}
-      <div className="h-[3px] w-full flex shrink-0">
-        <div className="w-1/3 bg-[#FF9933]"></div>
-        <div className="w-1/3 bg-[#FFFFFF]"></div>
-        <div className="w-1/3 bg-[#138808]"></div>
-      </div>
+      {/* Persistent Unified 3-Tab SaaS Navigation Bar */}
+      <TopSaaSNav />
 
-      {/* Main Responsive Canvas (Floating Rail + Bento Workspace) */}
-      <div className="flex-1 p-3 sm:p-5 flex gap-4 min-w-0">
-        
-        {/* Left Floating Sidebar Rail (From Images 3, 4 & 7) */}
-        <FloatingSidebarRail />
+      {/* Dynamic Route Workspace */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <Routes>
+          {/* TAB 1: Enterprise SaaS Home Page */}
+          <Route path="/" element={
+            <div className="flex-1 flex flex-col justify-between">
+              <main className="flex-1">
+                <HomePage />
+              </main>
+              <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <TelemetryFooter />
+              </div>
+            </div>
+          } />
+          <Route path="/home" element={<Navigate to="/" replace />} />
 
-        {/* Right Main Column (Bento Header + Dynamic Route Views + Telemetry Footer) */}
-        <div className="flex-1 flex flex-col gap-4 min-w-0">
-          
-          {/* Top Floating Action Header with 5-Role Switcher Pills (From Images 2, 3 & 4) */}
-          <BentoHeader />
+          {/* TAB 2: Features & Advantages Deep-Dive */}
+          <Route path="/features" element={
+            <div className="flex-1 flex flex-col justify-between">
+              <main className="flex-1">
+                <FeaturesPage />
+              </main>
+              <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <TelemetryFooter />
+              </div>
+            </div>
+          } />
 
-          {/* Dynamic Route Workspace */}
-          <main className="flex-1 min-w-0">
-            <Routes>
-              <Route path="/" element={<InstitutionDashboard />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/institution" element={<InstitutionDashboard />} />
-              <Route path="/compliance" element={<AICTEComplianceDashboard />} />
-              <Route path="/aicte-command" element={<Navigate to="/compliance" replace />} />
-              <Route path="/analytics" element={<PolicyAnalyticsDashboard />} />
-              <Route path="/verify" element={<EmployerVerifierDashboard />} />
-              <Route path="/student-wallet" element={<StudentWalletDashboard />} />
-              
-              <Route path="/features" element={<FeaturesPage />} />
-              <Route path="/explainer" element={<VideoExplainerPage />} />
-              <Route path="/video" element={<Navigate to="/explainer" replace />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/audit" element={<AuditPage />} />
+          {/* TAB 3: Role-Isolated Bento Workspace */}
+          <Route path="/portal" element={<PortalWorkspace />} />
+          <Route path="/institution" element={<PortalWorkspace />} />
+          <Route path="/compliance" element={<PortalWorkspace />} />
+          <Route path="/aicte-command" element={<Navigate to="/compliance" replace />} />
+          <Route path="/analytics" element={<PortalWorkspace />} />
+          <Route path="/verify" element={<PortalWorkspace />} />
+          <Route path="/student-wallet" element={<PortalWorkspace />} />
 
-              {/* Fallback */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
+          {/* Ancillary Pages */}
+          <Route path="/explainer" element={
+            <div className="flex-1 flex flex-col justify-between">
+              <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <VideoExplainerPage />
+              </main>
+              <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <TelemetryFooter />
+              </div>
+            </div>
+          } />
+          <Route path="/video" element={<Navigate to="/explainer" replace />} />
+          <Route path="/audit" element={
+            <div className="flex-1 flex flex-col justify-between">
+              <main className="flex-1 p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <AuditPage />
+              </main>
+              <div className="p-4 sm:p-6 max-w-7xl mx-auto w-full">
+                <TelemetryFooter />
+              </div>
+            </div>
+          } />
 
-          {/* Telemetry Footer */}
-          <TelemetryFooter />
-        </div>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
 
       {/* Global Interactive Modals & Drawers */}

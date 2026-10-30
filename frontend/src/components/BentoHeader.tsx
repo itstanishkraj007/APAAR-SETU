@@ -153,14 +153,63 @@ export const BentoHeader: React.FC = () => {
           <span className="hidden sm:inline">Export</span>
         </button>
 
-        {/* Black Pill CTA: + Upload Student Roster (From Image 4 + New Task) */}
-        <button
-          onClick={() => setIsUploadModalOpen(true)}
-          className="bg-[#141519] hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
-        >
-          <Plus size={13} strokeWidth={3} />
-          <span>Upload Roster</span>
-        </button>
+        {/* Role-Specific Primary CTA (Strict Isolation: No Upload form in Auditor or Student views) */}
+        {role === 'ROLE_INSTITUTION' && (
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="bg-[#141519] hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+          >
+            <Plus size={13} strokeWidth={3} />
+            <span>Upload Roster</span>
+          </button>
+        )}
+
+        {role === 'ROLE_AICTE_COMPLIANCE' && (
+          <button
+            onClick={() => {
+              const el = document.getElementById('excess-intake-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+          >
+            <span>Quarantine Queue</span>
+          </button>
+        )}
+
+        {role === 'ROLE_ANALYTICS_POLICY' && (
+          <button
+            onClick={() => exportDataPackage('AISHE')}
+            className="bg-[#1868FF] hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+          >
+            <Download size={13} />
+            <span>AISHE DCF-II</span>
+          </button>
+        )}
+
+        {role === 'ROLE_EMPLOYER_VERIFIER' && (
+          <button
+            onClick={() => {
+              const input = document.getElementById('verifier-search-input');
+              if (input) input.focus();
+            }}
+            className="bg-[#1868FF] hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+          >
+            <Search size={13} />
+            <span>Verify APAAR</span>
+          </button>
+        )}
+
+        {role === 'ROLE_STUDENT_WALLET' && (
+          <button
+            onClick={() => {
+              const el = document.getElementById('dpdp-consent-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-[#10B981] hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition flex items-center space-x-1.5 cursor-pointer flex-shrink-0"
+          >
+            <span>DPDP Consent</span>
+          </button>
+        )}
       </div>
     </header>
   );

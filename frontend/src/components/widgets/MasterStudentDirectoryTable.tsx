@@ -228,28 +228,35 @@ export const MasterStudentDirectoryTable: React.FC<MasterStudentDirectoryTablePr
                   </td>
 
                   {/* 12-Digit APAAR ID */}
-                  <td className="py-3.5 px-3">
-                    <span className="font-mono text-xs font-semibold text-slate-900 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60">
+                  <td className="py-3.5 px-3 min-w-0">
+                    <span 
+                      title={s.apaar_id}
+                      className="font-mono text-xs font-semibold text-slate-900 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/60 truncate max-w-[140px] inline-block"
+                    >
                       {s.apaar_id}
                     </span>
                   </td>
 
                   {/* Institutional Roll ID */}
-                  <td className="py-3.5 px-3 font-mono font-medium text-slate-700">
-                    {s.student_id}
+                  <td className="py-3.5 px-3 font-mono font-medium text-slate-700 min-w-0">
+                    <span title={s.student_id} className="truncate max-w-[140px] inline-block">
+                      {s.student_id}
+                    </span>
                   </td>
 
                   {/* Quota Category */}
-                  <td className="py-3.5 px-3">
+                  <td className="py-3.5 px-3 min-w-0">
                     {getQuotaBadge(s.quota_bucket)}
                   </td>
 
                   {/* Seat Slot ID */}
-                  <td className="py-3.5 px-3 font-mono text-[11px] text-slate-600">
+                  <td className="py-3.5 px-3 font-mono text-[11px] text-slate-600 min-w-0">
                     {s.seat_slot_id ? (
-                      <span className="text-emerald-700 font-semibold">{s.seat_slot_id}</span>
+                      <span title={s.seat_slot_id} className="text-emerald-700 font-semibold truncate max-w-[160px] inline-block">
+                        {s.seat_slot_id}
+                      </span>
                     ) : (
-                      <span className="text-rose-500 font-bold">Unsanctioned / Quarantined</span>
+                      <span className="text-red-500 font-bold italic">Unallocated / Quarantined</span>
                     )}
                   </td>
 

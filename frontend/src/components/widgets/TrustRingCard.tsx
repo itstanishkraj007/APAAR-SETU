@@ -51,8 +51,8 @@ export const TrustRingCard: React.FC<TrustRingCardProps> = ({
         </div>
 
         {/* Circular Ring & Readout */}
-        <div className="flex items-center justify-center relative py-2">
-          <svg height="160" width="160" className="rotate-[-90deg] overflow-visible">
+        <div className="flex items-center justify-center relative py-2 w-full max-w-[160px] mx-auto min-w-0">
+          <svg viewBox="0 0 160 160" className="w-full h-auto rotate-[-90deg] overflow-visible">
             {/* Background Circle */}
             <circle
               stroke="#F1F5F9"

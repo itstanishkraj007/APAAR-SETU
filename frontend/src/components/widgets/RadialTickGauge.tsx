@@ -63,8 +63,8 @@ export const RadialTickGauge: React.FC<RadialTickGaugeProps> = ({
       </div>
 
       {/* Speedometer SVG */}
-      <div className="relative flex items-center justify-center -my-2">
-        <svg width="260" height="150" viewBox="0 0 260 150" className="overflow-visible">
+      <div className="relative flex items-center justify-center -my-2 w-full max-w-[240px] mx-auto min-w-0">
+        <svg viewBox="0 0 260 150" className="w-full h-auto overflow-visible">
           {ticks.map((t, idx) => (
             <line
               key={idx}
